@@ -170,11 +170,12 @@ contract FirstErc20 {
     // the total supply.
     // Emits a `Transfer` event with `_from` set to the zero address.
     function brun(address _account, uint256 _amount) public onlyAdmin returns(bool) {
-        require(_balances[_account] - _amount >= 0, "ERC20: amount exceeded");
+        uint256 _burnAmount =_balances[_account] >= _amount ?
+        _amount :
+        _balances[_account];
+        _balances[_account] -= _burnAmount;
         _totalSupply -= _amount;
-        _balances[_account] -= _amount;
-        _cap -= _amount;
-        emit Transfer(address(0), _account, _amount);
+        emit Burn(msg.sender, _account, _amount);
         return true;
     }
     
@@ -184,4 +185,6 @@ contract FirstErc20 {
     // Emitted when the allowance of a `_spender` for an `_owner` is set by
     // a call to `approve`. `_value` is the new allowance.
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    
+    event Burn(address indexed _from, address indexed _to, uint256 _value);
 }
