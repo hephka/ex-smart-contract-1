@@ -7,17 +7,31 @@ contract FirstIco {
 
     // The price of 1 unit of our token in wei;
     uint256 public _price;
+    
+    address payable _wallet;
+    
+    mapping(address => uint256) public balances;
 
     // Address of token seller
     address payable private _seller;
+    
+    uint256 _nbTokens;
+    
+    event Purchase(
+        address indexed _buyer,
+        uint256 _amount
+    );
 
-    constructor(uint256 price, address payable seller, address erc20Address ) public {
+    constructor(uint256 price, address payable seller, address erc20Address) public {
         _price = price;
         _seller = seller;
-        //Token is deployed at 0xac5F7C280cC297C8529d48609188ED7f96974d52
+        //Token is deployed at 0xA4A293C6116fab1C1C6A96FFB44B9C36CcDA535C
         token = FirstErc20(erc20Address);
     }
-
+    
+    receive() external payable {
+        buy(_nbTokens);
+    }
 
     function buy(uint256 nbTokens) public payable returns(bool){
         require(msg.value >= 0, "ICO: Price is not 0 ether");
